@@ -4,22 +4,27 @@ namespace MessageBoard
 {
     public class MessageHandler
     {
-        private List<Message> messages = new List<Message>();
-        private string fileName = @"messages.json";
+        private readonly List<Message> messages = [];
+        private readonly string fileName = @"messages.json";
 
         public MessageHandler()
         {
             if (File.Exists(fileName))
             {
                 string jsonString = File.ReadAllText(fileName);
-                Console.WriteLine(jsonString);
                 messages = DeserializeMessages(jsonString);
             }
         }
 
-        public void AddMessage(Message message) 
+        public void AddMessage(Message message)
         {
             messages.Add(message);
+            SerializeMessages(messages);
+        }
+
+        public void DeleteMessage(int index)
+        {
+            messages.RemoveAt(index);
             SerializeMessages(messages);
         }
 
@@ -39,5 +44,4 @@ namespace MessageBoard
             return JsonSerializer.Deserialize<List<Message>>(input)!;
         }
     }
-
 }

@@ -9,6 +9,7 @@
             while (true)
             {
                 Console.Clear();
+                Console.CursorVisible = false;
                 Console.WriteLine(
                     """
                     *** En Gästbok ***
@@ -28,7 +29,7 @@
                         Id: {messageIndex}
                         Namn: {message.User}
                         Meddelande: {message.Content}
-                        
+
                         """);
 
                     messageIndex++;
@@ -36,23 +37,57 @@
 
                 int pressedKey = (int)Console.ReadKey(true).Key;
 
-                if (pressedKey == 49)
+                switch (pressedKey)
                 {
-                    Message newMessage = new()
-                    {
-                        User = "Satan",
-                        Content = "Evil rules!"
-                    };
-                    messageHandler.AddMessage(newMessage);
-                }
+                    // På min dator blir tangent 1 -> 49 och NumPad 1 -> 97.
+                    case 49:
+                    case 97:
+                        Console.CursorVisible = true;
+                        Console.Write("Ange namn: ");
+                        string? user = Console.ReadLine();
+                        Console.Write("Ange innehåll: ");
+                        string? content = Console.ReadLine();
 
-                if (pressedKey == 88)
-                {
-                    Environment.Exit(0);
+                        if ((!String.IsNullOrEmpty(user)) && (!String.IsNullOrEmpty(content)))
+                        {
+                            Message newMessage = new()
+                            {
+                                User = user,
+                                Content = content
+                            };
+                            messageHandler.AddMessage(newMessage);
+                        }
+
+                        break;
+                    // På min dator blirtangent 2 -> 50 och NumPad 1 -> 98.
+                    case 50:
+                    case 98:
+                        Console.CursorVisible = true;
+                        Console.Write("Ange nummer på inlägg att ta bort: ");
+                        string? messageToDelete = Console.ReadLine();
+
+                        try
+                        {
+                            if (!String.IsNullOrEmpty(messageToDelete))
+                            {
+                                messageHandler.DeleteMessage(Convert.ToInt32(messageToDelete));
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Inlägget du försöker ta bort existerar inte.");
+                            Console.WriteLine("\nTryck på valfri tangent för att fortsätta...");
+                            Console.ReadKey();
+                        }
+
+                        break;
+                    case 88:
+                        Environment.Exit(0);
+                        break;
+                    default:
+                        break;
                 }
             }
-
-
         }
     }
 }
